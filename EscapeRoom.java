@@ -44,72 +44,108 @@ public class EscapeRoom
     System.out.println("Welcome to EscapeRoom!");
     System.out.println("Get to the other side of the room, avoiding walls and invisible traps,");
     System.out.println("pick up all the prizes.\n");
-    
+
     GameGUI game = new GameGUI();
     game.createBoard();
 
-    // size of move
-    int m = 60; 
-    // individual player moves
-    int px = 0;
-    int py = 0; 
-    
     int score = 0;
 
     Scanner in = new Scanner(System.in);
     String[] validCommands = { "right", "left", "up", "down", "r", "l", "u", "d",
     "jump", "jr", "jumpleft", "jl", "jumpup", "ju", "jumpdown", "jd",
-    "pickup", "p", "quit", "q", "replay", "help", "?"};
-  
+    "pickup", "p", "trap", "t", "quit", "q", "replay", "help", "?"};
+
     String option="";
     boolean play = true;
     while (play)
     {
+      System.out.print("Enter command: ");
       option=in.nextLine();
       if (option.equals("right")||option.equals("r")){
-        game.movePlayer(1,0);
+        score += game.movePlayer(60,0);
       }
       else if (option.equals("left")||option.equals("l")){
-        game.movePlayer(-1,0) ; 
+        score += game.movePlayer(-60,0) ;
       }
       else if (option.equals("up")||option.equals("u")){
-        game.movePlayer(0, -1);
+        score += game.movePlayer(0, -60);
       }
       else if(option.equals("down")||option.equals("d")){
-        game.movePlayer(0,1);
+        score += game.movePlayer(0,60);
       }
       else if(option.equals("jump")||option.equals("jr")){
-        game.movePlayer(50,0);
+        score += game.movePlayer(120,0);
       }
       else if(option.equals("jumpleft")||(option.equals("jl"))){
-        game.movePlayer(-50,0);
+        score += game.movePlayer(-120,0);
       }
       else if(option.equals("jumpup")||option.equals("ju")){
-        game.movePlayer(0,-50);
-
+        score += game.movePlayer(0,-120);
       }
       else if(option.equals("jumpdown")||option.equals("jd")){
-        game.movePlayer(0,50);
+        score += game.movePlayer(0,120);
       }
       else if(option.equals("pickup")||option.equals("p")){
-        game.pickupPrize();
-
+        score += game.pickupPrize();
+      }
+      else if(option.equals("trap")||option.equals("t")){
+        System.out.println("Which direction to check for trap? (r/l/u/d)");
+        String direction = in.nextLine();
+        if(direction.equals("r")){
+          if(game.isTrap(60,0)){
+            score = score+ game.springTrap(60,0);
+          } else {
+            score = score- game.springTrap(60,0);
+          }
+        }
+        else if(direction.equals("l")){
+          if(game.isTrap(-60,0)){
+            score = score+ game.springTrap(-60,0);
+          } else {
+            score = score+ game.springTrap(-60,0);
+          }
+        }
+        else if(direction.equals("u")){
+          if(game.isTrap(0,-60)){
+            score = score+game.springTrap(0,-60);
+          } else {
+            score = score+ game.springTrap(0,-60);
+          }
+        }
+        else if(direction.equals("d")){
+          if(game.isTrap(0,60)){
+            score = score+ game.springTrap(0,60);
+          } else {
+            score = score+ game.springTrap(0,60);
+          }
+        }
+      }
+      else if(option.equals("help")||option.equals("?")){
+        System.out.println("Choose your Command (don't type wrong or you lose points!):");
+        System.out.println("  Movet: right/r, left/l, up/u, down/d");
+        System.out.println("  Jump: jump/jr (right), jumpleft/jl, jumpup/ju (up), jumpdown/jd (down)");
+        System.out.println("  Actions: pickup/p (pick up prize), trap/t (spring trap)");
+        System.out.println("  Game: quit/q, replay, help/?");
+        System.out.println("Goal: Reach the far right side and collect all prizes");
       }
       else if(option.equals("quit")||option.equals("q")){
-        game.endGame();
+        play=false;
       }
       else if(option.equals("replay")){
-        System.out.println("Walked"+game.getSteps());
-        game.replay();
+        System.out.println("Steps taken: " + game.getSteps());
+        score += game.replay();
+      }
+      else {
+        System.out.println("Invalid command. Type 'help' for available commands.");
       }
     }
 
-  score += game.endGame();
+    score += game.endGame();
 
-    System.out.println("score=" + score);
-      System.out.println("steps=" + game.getSteps());
+    System.out.println("Wins=" + score);
+    System.out.println("Attempts=" + game.getSteps());
     }
-  }
+}
 
 
         
